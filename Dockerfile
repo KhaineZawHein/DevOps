@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21-jdk
-COPY DevOps/target/DevOps-1.0-SNAPSHOT.jar /tmp/DevOps-1.0-SNAPSHOT.jar
+FROM amazoncorretto:21
+COPY ./target/devops-0.1.0.1-jar-with-dependencies.jar /tmp
 WORKDIR /tmp
-ENTRYPOINT ["java", "-jar", "DevOps-1.0-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "devops-0.1.0.1-jar-with-dependencies.jar"]

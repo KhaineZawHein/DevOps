@@ -1,10 +1,6 @@
 name: Java CI with Maven
 
-on:
-  push:
-    branches: [ "master", "main" ]
-  pull_request:
-    branches: [ "master", "main" ]
+on: [push]
 
 jobs:
   build:
@@ -20,5 +16,20 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
+      - name: Setup network & MongoDB container
+        run: |
+          docker network create --driver bridge se-methods
+          docker pull mongo
+          docker run -d --name mongo-dbserver --network se-methods mongo
+
       - name: Build with Maven
-        run: mvn -B test
+        run: mvn package
+
+      - name: Build Docker Image
+        run: docker build -t devops-app .
+
+      - name: Run Docker Container
+        run: docker run --network se-methods --name devopscontainer devops-app
+
+      - name: View Container Logs
+        run: docker logs devopscontainer
