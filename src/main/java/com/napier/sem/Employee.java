@@ -1,4 +1,4 @@
-package org.example;
+package com.napier.sem;
 
 /**
  * Represents an employee
