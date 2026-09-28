@@ -1,6 +1,8 @@
 package com.napier.sem;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class App
 {
@@ -25,7 +27,7 @@ public class App
             try
             {
                 Thread.sleep(30000);
-                con = DriverManager.getConnection("jdbc:mysql://db:3306/employees?allowPublicKeyRetrieval=true&useSSL=false", "root", "example");
+                con = DriverManager.getConnection("jdbc:mysql://localhost:3306/employees?allowPublicKeyRetrieval=true&useSSL=false", "root", "example");
                 System.out.println("Successfully connected");
                 break;
             }
@@ -116,6 +118,58 @@ public class App
         }
     }
 
+    // --- NEW METHOD: Get Employees by Role ---
+    public List<Employee> getEmployeesByRole(String role)
+    {
+        List<Employee> employees = new ArrayList<>();
+        try
+        {
+            Statement stmt = con.createStatement();
+            String strSelect = "SELECT employees.emp_no, employees.first_name, employees.last_name, salaries.salary " +
+                    "FROM employees, salaries, titles " +
+                    "WHERE employees.emp_no = salaries.emp_no " +
+                    "AND employees.emp_no = titles.emp_no " +
+                    "AND salaries.to_date = '9999-01-01' " +
+                    "AND titles.to_date = '9999-01-01' " +
+                    "AND titles.title = '" + role + "' " +
+                    "ORDER BY employees.emp_no ASC";
+
+            ResultSet rset = stmt.executeQuery(strSelect);
+            while (rset.next())
+            {
+                Employee emp = new Employee();
+                emp.emp_no = rset.getInt("emp_no");
+                emp.first_name = rset.getString("first_name");
+                emp.last_name = rset.getString("last_name");
+                emp.salary = rset.getInt("salary");
+                employees.add(emp);
+            }
+        }
+        catch (Exception e)
+        {
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get employees by role");
+        }
+        return employees;
+    }
+
+    // --- NEW METHOD: Display List of Employees ---
+    public void displayEmployees(List<Employee> employees)
+    {
+        if (employees != null && !employees.isEmpty())
+        {
+            System.out.println("--- Employees by Role ---");
+            for (Employee emp : employees)
+            {
+                System.out.println(emp.emp_no + " " + emp.first_name + " " + emp.last_name + " - Salary: " + emp.salary);
+            }
+        }
+        else
+        {
+            System.out.println("No employees found for this role.");
+        }
+    }
+
     public static void main(String[] args)
     {
         // Create new Application
@@ -124,11 +178,9 @@ public class App
         // Connect to database
         a.connect();
 
-        // Get Employee
-        Employee emp = a.getEmployee(255530);
-
-        // Display results
-        a.displayEmployee(emp);
+        // --- TEST THE NEW FEATURE: Get salaries by role (e.g., Engineer) ---
+        List<Employee> engineers = a.getEmployeesByRole("Engineer");
+        a.displayEmployees(engineers);
 
         // Disconnect from database
         a.disconnect();

@@ -1,7 +1,7 @@
 @startuml
 
-actor "HR Advisor" as HR
-actor "Department Manager" as DM
+actor HR as "HR Advisor"
+actor DM as "Department Manager"
 
 rectangle Database
 
@@ -16,30 +16,32 @@ rectangle "HR System" {
     usecase UC8 as "Delete employee"
 
     usecase UCa as "Print salaries"
-
-    HR --> UC1
-    HR --> UC2
-    HR --> UC4
-    HR --> UC5
-    HR --> UC6
-    HR --> UC7
-    HR --> UC8
-
-    DM --> UC3
-
-    UC1 ..> UCa : include
-    UC2 ..> UCa : include
-    UC3 ..> UCa : include
-    UC4 ..> UCa : include
-
-    UC1 -- Database
-    UC2 -- Database
-    UC3 -- Database
-    UC4 -- Database
-    UC5 -- Database
-    UC6 -- Database
-    UC7 -- Database
-    UC8 -- Database
 }
+
+' Relationships between Actors and Use Cases
+HR --> UC1
+HR --> UC2
+HR --> UC4
+HR --> UC5
+HR --> UC6
+HR --> UC7
+HR --> UC8
+
+DM --> UC3
+
+' Include relationships for printing reports
+UC1 ..> UCa : <<include>>
+UC2 ..> UCa : <<include>>
+UC4 ..> UCa : <<include>>
+
+' Relationships with Database
+UC1 -- Database
+UC2 -- Database
+UC3 -- Database
+UC4 -- Database
+UC5 -- Database
+UC6 -- Database
+UC7 -- Database
+UC8 -- Database
 
 @enduml
